@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}
+Welcome
+{% endblock %}
+{% block content %}
+<h1>Is your favorite singer a narcissist?</h1>
+<h3>Find out from the lyrics of their top songs!</h3>
+<form action="#" method="POST">
+  <label for="artistSearch">Search for artist name:</label>
+  <input name="artistSearch" type="text" placeholder="The Beatles">
+  <input type="submit" value="Submit"/>
+</form>
+{% endblock %}
