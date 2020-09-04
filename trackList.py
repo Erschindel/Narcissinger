@@ -8,28 +8,33 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import spotifyAuth
 
 
-artist = input("Enter artist name: ")
-artist_query = artist.replace(" ", "%20")
+class Tracks () :
+    def __init__(self, artist_name) :
+        self.artist_name = artist_name
+        self.artist_query = artist_name.replace(" ", "%20")
+        self.track_list = []
 
-request = "https://api.spotify.com/v1/search?q=%s&type=artist" % artist_query
+    def send_auth (self) :
+        request = "https://api.spotify.com/v1/search?q=%s&type=artist" % self.artist_query
 
-token = spotifyAuth.access_token
-header = {
-    "Authorization" : f"Bearer {token}"
-}
+        token = spotifyAuth.access_token
+        header = {
+            "Authorization" : f"Bearer {token}"
+        }
+        try :
+            r = requests.get(request, headers = header)
+        except :
+            print("Failed to connect to Spotify")
 
-try :
-    r = requests.get(request, headers = header)
-except :
-    print("Failed to connect to Spotify")
+        response_data = r.json()
+        return(response_data)
 
-response_data = r.json()
-artist_id = response_data["artists"]["items"][0]["id"]
+    def get_track_list (self) :
+        top_tracks = self.send_auth()
+        artist_id = top_tracks["artists"]["items"][0]["id"]
+        sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+        response = sp.artist_top_tracks(artist_id)
 
-sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+        track_list = [track['name'] for track in response['tracks']]
 
-response = sp.artist_top_tracks(artist_id)
-
-track_list = [track['name'] for track in response['tracks']]
-
-# print(track_list)
+        self.track_list = track_list
